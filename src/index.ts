@@ -2,7 +2,7 @@ import express from "express";
 import {
   QueryType,
   ResType,
-  character_post_verification,
+  characterPost,
 } from "./verification";
 
 const app = express();
@@ -14,10 +14,6 @@ app.listen(port, () => {
   console.log(`API is running on port ${port}.`);
 });
 
-app.get("/characters", (req, res) => {
-  res.send("Test");
-});
-
 app.post("/characters", (req, res) => {
   const query: QueryType = {
     first_name: req.query.first_name as string,
@@ -26,6 +22,7 @@ app.post("/characters", (req, res) => {
     father_name: req.query.father_name as string,
     mother_name: req.query.mother_name as string,
   };
-  const response: ResType = character_post_verification(query);
-  res.status(response.code).json(response);
+  characterPost(query).then((response: ResType) => {
+    res.status(response.code).json(response);
+  });
 });
