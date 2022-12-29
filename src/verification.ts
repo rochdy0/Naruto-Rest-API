@@ -1,10 +1,11 @@
 import { Database } from "sqlite3";
+import { resolveTypeReferenceDirective } from "typescript";
 
 const db = new Database("db.sqlite");
 
 export interface QueryType {
   [key: string]: any;
-  character_id?: number;
+  character_id?: number | undefined;
   first_name?: string;
   last_name?: string;
   village?: string;
@@ -24,6 +25,7 @@ export interface ResType {
   code: codeType;
   error: errorType;
   message?: string;
+  body?: object;
 }
 
 export async function characterPost(query: QueryType): Promise<ResType> {
@@ -84,6 +86,31 @@ export async function characterPost(query: QueryType): Promise<ResType> {
     console.error(err);
     response.code = 500;
     response.error = `Internal Server Error`;
+    return response;
+  }
+}
+
+export async function characterGet(query: QueryType): Promise<ResType> {
+  const sqlQuery: string = query.character_id
+    ? `SELECT * FROM Rest WHERE character_id = ?`
+    : `SELECT * FROM Rest`;
+  try {
+    const response: ResType = await new Promise(async (resolve) => {
+      db.all(sqlQuery, [query.character_id], (_, res) => {
+        if (res.length > 0) {
+          resolve({ code: 200, error: "OK", body: res });
+        } else {
+          resolve({code: 404, error: "Not Found", message: "character not found with this id"})
+        }
+      });
+    });
+    return response;
+  } catch (err) {
+    console.error(err);
+    const response: ResType = {
+      code: 500,
+      error: `Internal Server Error`,
+    };
     return response;
   }
 }

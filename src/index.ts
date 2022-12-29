@@ -3,6 +3,7 @@ import {
   QueryType,
   ResType,
   characterPost,
+  characterGet,
 } from "./verification";
 
 const app = express();
@@ -12,6 +13,23 @@ app.use(express.json());
 
 app.listen(port, () => {
   console.log(`API is running on port ${port}.`);
+});
+
+app.get("/characters", (req, res) => {
+  let query: QueryType = {character_id: undefined};
+  if (req.query.character_id !== undefined) {
+    if (typeof req.query.character_id === 'string')
+    {
+      const character_id: number = parseInt(req.query.character_id);
+      query.character_id = character_id;
+    }
+  }
+  characterGet(query).then((response: ResType) => {
+    if (response.code === 200)
+      res.status(response.code).json(response.body);
+    else
+      res.status(response.code).json(response);
+  });
 });
 
 app.post("/characters", (req, res) => {
