@@ -44,3 +44,12 @@ app.post("/characters", (req, res) => {
     res.status(response.code).json(response);
   });
 });
+
+app.get('*', function(req, res){
+  const response: ResType = {
+    code: 404,
+    error: 'Not Found',
+    message: 'Ressource not found'
+  }
+  res.status(response.code).json(response);
+});
