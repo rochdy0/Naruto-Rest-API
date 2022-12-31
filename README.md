@@ -27,11 +27,11 @@ HTTP Code | Description
 ### Post character
 URL : `POST http://localhost:3000/characters`
 #### Parameters
-Parameter  | Type | Required?
-------------- | ------------- | ------------- 
+Parameter  | Type | Required? | Deescription
+------------- | ------------- | ------------- | ------------- 
 first_name | String | Yes 
 last_name | String | Yes
-village | String | Yes
+village | String | Yes | Valid values are `Konoha`, `Kiri`, `Kumo`, `Ame`, `Iwa`, `Oto`, `Suna`
 father_name | String | Yes
 mother_name | String | Yes
 #### Response Code

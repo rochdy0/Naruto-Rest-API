@@ -11,12 +11,19 @@
   },
   "scripts": {
     "start": "ts-node ./src/index.ts",
-    "serve": "nodemon ./src/index.ts"
+    "serve": "nodemon ./src/index.ts",
+    "test": "jest"
   },
-  "name": "rest-typescript",
-  "version": "1.0.0",
+  "name": "naruto-api",
+  "version": "1.1.0",
   "description": "A REST API writtent in Typescript",
   "main": "index.js",
-  "author": "",
-  "license": "ISC"
+  "author": "rochdy0",
+  "license": "ISC",
+  "devDependencies": {
+    "@jest/globals": "^29.3.1",
+    "@types/jest": "^29.2.4",
+    "jest": "^29.3.1",
+    "ts-jest": "^29.0.3"
+  }
 }

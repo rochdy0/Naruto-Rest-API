@@ -9,6 +9,7 @@ yarn-error.log*
 node_modules/
 jspm_packages/
 
+
 # Optional npm cache directory
 .npm
 
@@ -21,3 +22,5 @@ jspm_packages/
 # System Files
 .DS_Store
 Thumbs.db
+
+coverage/

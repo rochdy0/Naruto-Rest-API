@@ -16,14 +16,7 @@ app.listen(port, () => {
 });
 
 app.get("/characters", (req, res) => {
-  let query: QueryType = {character_id: undefined};
-  if (req.query.character_id !== undefined) {
-    if (typeof req.query.character_id === 'string')
-    {
-      const character_id: number = parseInt(req.query.character_id);
-      query.character_id = character_id;
-    }
-  }
+  let query: QueryType = {character_id: req.query.character_id as string};
   characterGet(query).then((response: ResType) => {
     if (response.code === 200)
       res.status(response.code).json(response.body);
@@ -48,7 +41,7 @@ app.post("/characters", (req, res) => {
 app.get('*', function(req, res){
   const response: ResType = {
     code: 404,
-    error: 'Not Found',
+    status: 'Not Found',
     message: 'Ressource not found'
   }
   res.status(response.code).json(response);

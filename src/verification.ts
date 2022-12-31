@@ -1,11 +1,11 @@
 import { Database } from "sqlite3";
-import { resolveTypeReferenceDirective } from "typescript";
 
 const db = new Database("db.sqlite");
 
+// export type villageType = "Konoha" | "Kiri" | "Kumo" | "Ame" | "Iwa" | "Oto" | "Suna";
 export interface QueryType {
   [key: string]: any;
-  character_id?: number | undefined;
+  character_id?: string;
   first_name?: string;
   last_name?: string;
   village?: string;
@@ -14,7 +14,7 @@ export interface QueryType {
 }
 
 type codeType = 200 | 201 | 400 | 404 | 500;
-type errorType =
+type statusType =
   | "OK"
   | "Created"
   | "Bad Request"
@@ -23,25 +23,42 @@ type errorType =
 
 export interface ResType {
   code: codeType;
-  error: errorType;
+  status: statusType;
   message?: string;
   body?: object;
 }
+
+const villages = new Set([
+  "Konoha",
+  "Kiri",
+  "Kumo",
+  "Ame",
+  "Iwa",
+  "Oto",
+  "Suna",
+]);
 
 export async function characterPost(query: QueryType): Promise<ResType> {
   let response: ResType = {} as ResType;
   for (const key in query) {
     if (!query[key]) {
       response.code = 400;
-      response.error = `Bad Request`;
+      response.status = `Bad Request`;
       response.message = `Parameter ${key} is missing`;
       return response;
     } else if (/\d/.test(query[key])) {
       response.code = 400;
-      response.error = `Bad Request`;
+      response.status = `Bad Request`;
       response.message = `Parameter ${key} cannot contain numbers`;
       return response;
     }
+  }
+
+  if (query.village && !villages.has(query.village)) {
+    response.code = 400;
+    response.status = `Bad Request`;
+    response.message = `Parameter village cannot contain this value`;
+    return response;
   }
 
   try {
@@ -57,14 +74,14 @@ export async function characterPost(query: QueryType): Promise<ResType> {
     });
     if (exist) {
       response.code = 400;
-      response.error = `Bad Request`;
+      response.status = `Bad Request`;
       response.message = `Parameters first_name and last_name already exists`;
       return response;
     }
   } catch (err) {
     console.error(err);
     response.code = 500;
-    response.error = `Internal Server Error`;
+    response.status = `Internal Server Error`;
     return response;
   }
 
@@ -80,36 +97,51 @@ export async function characterPost(query: QueryType): Promise<ResType> {
       ]
     );
     response.code = 201;
-    response.error = `Created`;
+    response.status = `Created`;
     return response;
   } catch (err) {
     console.error(err);
     response.code = 500;
-    response.error = `Internal Server Error`;
+    response.status = `Internal Server Error`;
     return response;
   }
 }
 
 export async function characterGet(query: QueryType): Promise<ResType> {
+  if (query.character_id !== undefined && /\D/.test(query.character_id)) {
+    const response: ResType = {
+      code: 400,
+      status: "Bad Request",
+      message: "character_id must be a number",
+    };
+    return response;
+  }
+  if (query.character_id === "") query.character_id = undefined;
+
   const sqlQuery: string = query.character_id
     ? `SELECT * FROM Rest WHERE character_id = ?`
     : `SELECT * FROM Rest`;
+
   try {
     const response: ResType = await new Promise(async (resolve) => {
-      db.all(sqlQuery, [query.character_id], (_, res) => {
-        if (res.length > 0) {
-          resolve({ code: 200, error: "OK", body: res });
-        } else {
-          resolve({code: 404, error: "Not Found", message: "character not found with this id"})
-        }
-      });
+        db.all(sqlQuery, [query.character_id], (_, res) => {
+          if (res.length > 0) {
+            resolve({ code: 200, status: "OK", body: res });
+          } else {
+            resolve({
+              code: 404,
+              status: "Not Found",
+              message: "character not found with this id",
+            });
+          }
+        });
     });
     return response;
   } catch (err) {
     console.error(err);
     const response: ResType = {
       code: 500,
-      error: `Internal Server Error`,
+      status: `Internal Server Error`,
     };
     return response;
   }
