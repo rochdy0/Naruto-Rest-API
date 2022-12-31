@@ -15,7 +15,7 @@
     "test": "jest"
   },
   "name": "naruto-api",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A REST API writtent in Typescript",
   "main": "index.js",
   "author": "rochdy0",

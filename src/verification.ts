@@ -38,18 +38,19 @@ const villages = new Set([
   "Suna",
 ]);
 
-export async function characterPost(query: QueryType): Promise<ResType> {
+export async function characterPost(query: QueryType, jest: boolean): Promise<ResType> {
   let response: ResType = {} as ResType;
-  for (const key in query) {
-    if (!query[key]) {
+  const queryUsedType = ['first_name', 'last_name', 'village', 'father_name', 'mother_name']
+  for (const key in queryUsedType) {
+    if (!query[queryUsedType[key]]) {
       response.code = 400;
       response.status = `Bad Request`;
-      response.message = `Parameter ${key} is missing`;
+      response.message = `Parameter ${queryUsedType[key]} is missing`;
       return response;
-    } else if (/\d/.test(query[key])) {
+    } else if (/[^a-zA-Z\s]/.test(query[queryUsedType[key]])) {
       response.code = 400;
       response.status = `Bad Request`;
-      response.message = `Parameter ${key} cannot contain numbers`;
+      response.message = `Parameter ${queryUsedType[key]} can only contain letters and spaces`;
       return response;
     }
   }
@@ -86,16 +87,19 @@ export async function characterPost(query: QueryType): Promise<ResType> {
   }
 
   try {
-    db.run(
-      `INSERT INTO Rest (first_name, last_name, village, father_name, mother_name) VALUES (?, ?, ?, ?, ?)`,
-      [
-        query.first_name,
-        query.last_name,
-        query.village,
-        query.father_name,
-        query.mother_name,
-      ]
-    );
+    if (!jest)
+    {
+      db.run(
+        `INSERT INTO Rest (first_name, last_name, village, father_name, mother_name) VALUES (?, ?, ?, ?, ?)`,
+        [
+          query.first_name,
+          query.last_name,
+          query.village,
+          query.father_name,
+          query.mother_name,
+        ]
+      );
+    }
     response.code = 201;
     response.status = `Created`;
     return response;

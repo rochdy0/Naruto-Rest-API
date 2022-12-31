@@ -33,7 +33,7 @@ app.post("/characters", (req, res) => {
     father_name: req.query.father_name as string,
     mother_name: req.query.mother_name as string,
   };
-  characterPost(query).then((response: ResType) => {
+  characterPost(query, false).then((response: ResType) => {
     res.status(response.code).json(response);
   });
 });
