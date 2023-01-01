@@ -7,7 +7,7 @@ URL : `GET http://localhost:3000/characters`
 #### Parameters
 Parameter  | Type | Required? | Description
 ------------- | ------------- | ------------- | -------------
-character_id  | Number | No | The ID of character you want to get. If no `character_id` is specified, you will get all characters.
+character_id  | Number | Yes | The ID of character you want to get.
 #### Response Body
 Field | Type
 ------------- | -------------
@@ -20,8 +20,9 @@ mother_name | String
 #### Response Code
 HTTP Code | Description
 ------------- | -------------
-200 OK | Successfully retrieved the list of character.
+200 OK | Successfully retrieved the character.
 404 Not Found | `character_id` not match with any characters.
+400 Bad Request | • `character_id` not contain only numbers. <br> • `character_id` is missing.
 500 Internal Server Error |
 
 ### Post character

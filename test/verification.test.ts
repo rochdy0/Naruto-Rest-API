@@ -18,54 +18,28 @@ describe("Function that verifies the parameter character_id and return HTTP code
       ],
     });
   });
-  test("Give no parameters and get all rows", async () => {
-    const data = await characterGet({});
+  test("Give character_id who's equal to ''", async () => {
+    const data = await characterGet({ character_id: '' });
     expect(data).toEqual({
-      code: 200,
-      status: "OK",
-      body: [
-        {
-          character_id: 1,
-          first_name: "Naruto",
-          last_name: "Uzumaki",
-          village: "Konoha",
-          father_name: "Minato Namikaze",
-          mother_name: "Kushina Uzumaki",
-        },
-        {
-          character_id: 2,
-          first_name: "Sakura",
-          last_name: "Haruno",
-          village: "Konoha",
-          father_name: "Kizashi Haruno",
-          mother_name: "Mebuki Haruno",
-        },
-      ],
+      code: 400,
+      status: "Bad Request",
+      message: "character_id is missing"
     });
   });
-  test("Give '' parameter and get all rows", async () => {
-    const data = await characterGet({ character_id: "" });
+  test("Give character_id who's equal to undefined", async () => {
+    const data = await characterGet({ character_id: undefined });
     expect(data).toEqual({
-      code: 200,
-      status: "OK",
-      body: [
-        {
-          character_id: 1,
-          first_name: "Naruto",
-          last_name: "Uzumaki",
-          village: "Konoha",
-          father_name: "Minato Namikaze",
-          mother_name: "Kushina Uzumaki",
-        },
-        {
-          character_id: 2,
-          first_name: "Sakura",
-          last_name: "Haruno",
-          village: "Konoha",
-          father_name: "Kizashi Haruno",
-          mother_name: "Mebuki Haruno",
-        },
-      ],
+      code: 400,
+      status: "Bad Request",
+      message: "character_id is missing"
+    });
+  });
+  test("Give no parameter", async () => {
+    const data = await characterGet({});
+    expect(data).toEqual({
+      code: 400,
+      status: "Bad Request",
+      message: "character_id is missing"
     });
   });
   test("Give 'a' to character_id to get an error ", async () => {

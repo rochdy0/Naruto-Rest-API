@@ -112,6 +112,15 @@ export async function characterPost(query: QueryType, jest: boolean): Promise<Re
 }
 
 export async function characterGet(query: QueryType): Promise<ResType> {
+  if (query.character_id === "" || query.character_id === undefined) {
+    const response: ResType = {
+      code: 400,
+      status: "Bad Request",
+      message: "character_id is missing"
+    }
+    return response
+  }
+
   if (query.character_id !== undefined && /\D/.test(query.character_id)) {
     const response: ResType = {
       code: 400,
@@ -120,11 +129,8 @@ export async function characterGet(query: QueryType): Promise<ResType> {
     };
     return response;
   }
-  if (query.character_id === "") query.character_id = undefined;
 
-  const sqlQuery: string = query.character_id
-    ? `SELECT * FROM Rest WHERE character_id = ?`
-    : `SELECT * FROM Rest`;
+  const sqlQuery: string = `SELECT * FROM Rest WHERE character_id = ?`;
 
   try {
     const response: ResType = await new Promise(async (resolve) => {
